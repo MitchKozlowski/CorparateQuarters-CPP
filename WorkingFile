@@ -1,0 +1,119 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+#include "DivSales.h"
+
+using namespace std;
+
+string prd(const double x, const int decDigits, const int width);
+string center(const string s, const int w);
+
+int main() {
+	const int NUM_OF_QUARTERS = 4;
+	const int NUM_OF_DIVISIONS = 6;
+	DivSales divQuarts[NUM_OF_DIVISIONS];
+
+	for (int i = 0; i < NUM_OF_DIVISIONS; i++) {
+		
+		double quarts[NUM_OF_QUARTERS];
+		cout << "Please enters quarterly sales for division: " << i + 1 << endl;
+		for (int i = 0; i < NUM_OF_QUARTERS; i++) {
+			cout << "Quarter " << i + 1 << ": ";
+			cin >> quarts[i];
+		}
+		divQuarts[i].quartSalesInput(quarts[0], quarts[1], quarts[2], quarts[3]);
+		cout << endl;
+	}
+
+	cout << center("Division #", 10) << " | " << center("Quarter 1", 10) << " | " << center("Quarter 2", 10) << " | " << center("Quarter 3", 10) << " | " << center("Quarter 4", 10) << endl;
+	for (int i = 0; i < NUM_OF_DIVISIONS; i++) {
+		cout << string(10 * 5 + 4 * 3, '-') << endl;
+		string division = "Division " + to_string(i + 1);
+		cout << center(division, 10) << " | "; 
+		
+		for (int j = 0; j < NUM_OF_QUARTERS; j++) {
+			cout << prd(divQuarts[i].quartSalesReturn(j), 2, 10);
+			
+			if (j < NUM_OF_QUARTERS - 1)
+				cout << " | ";
+		}
+		cout << endl;
+	}
+
+	cout << "Corporate Sales Total: " << prd(divQuarts[0].corpSalesTotal(), 2, 10) << endl;
+
+	system("pause");
+	return 0;
+}
+
+string prd(const double x, const int decDigits, const int width) {
+	stringstream ss;
+	ss << fixed << right;
+	ss.fill(' ');        // fill space around displayed #
+	ss.width(width);     // set  width around displayed #
+	ss.precision(decDigits); // set # places after decimal
+	ss << x;
+	return ss.str();
+}
+
+string center(const string s, const int w) {
+	stringstream ss, spaces;
+	int padding = w - s.size();                 // count excess room to pad
+	for (int i = 0; i<padding / 2; ++i)
+		spaces << " ";
+	ss << spaces.str() << s << spaces.str();    // format with padding
+	if (padding>0 && padding % 2 != 0)          // if odd #, add 1 space
+		ss << " ";
+	return ss.str();
+}
+
+**DivSales.h**
+#pragma once
+
+#include <iostream>
+
+using namespace std;
+
+class DivSales {
+public:
+	DivSales();
+	void quartSalesInput(double input1, double input2, double input3, double input4);
+	double quartSalesReturn(int input);
+	static double corpSalesTotal();
+
+private:
+	double quartSales[4];
+	static double corpTotal;
+};
+
+**DivSales.cpp**
+#include <iostream>
+#include "DivSales.h"
+
+using namespace std;
+
+double DivSales::corpTotal = 0;
+
+DivSales::DivSales() {
+	quartSales[0] = 0;
+	quartSales[1] = 0;
+	quartSales[2] = 0;
+	quartSales[3] = 0;
+	
+}
+
+void DivSales::quartSalesInput(double input1, double input2, double input3, double input4) {
+	quartSales[0] = input1;
+	quartSales[1] = input2;
+	quartSales[2] = input3;
+	quartSales[3] = input4;
+	corpTotal += input1 + input2 + input3 + input4;
+}
+
+double DivSales::quartSalesReturn(int input) {
+	return quartSales[input];
+}
+
+double DivSales::corpSalesTotal() {
+	return corpTotal;
+}
